@@ -32,6 +32,13 @@ function NavBar({ isUserSignedIn, handleSignOut }: NavBarProps) {
             </li>
             {isUserSignedIn ? (
               <li className="nav-item">
+                <Link className="nav-link" to="/profile">
+                  Profile
+                </Link>
+                </li>
+            ): null};
+            {isUserSignedIn ? (
+              <li className="nav-item">
                 <button className="nav-link" onClick={handleSignOut}>
                   Sign Out
                 </button>
