@@ -7,7 +7,7 @@ function Search() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/results/${searchTerm}`);
+    navigate('/results', { state: { searchTitle: searchTerm } });
   };
 
   return (

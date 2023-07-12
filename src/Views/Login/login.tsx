@@ -46,7 +46,7 @@ export default function Login({ setIsUserSignedIn }) {
           md={7}
           sx={{
             backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+              "url(https://e1.pxfuel.com/desktop-wallpaper/254/57/desktop-wallpaper-aesthetic-anime-backgrounds-clean-anime.jpg)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"

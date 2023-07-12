@@ -1,18 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { auth } from "../../firebase";
+import { getAuth, signOut } from "firebase/auth";
 
 interface User {
   email: string | null;
   id: string | null;
 }
 
-interface NavBarProps {
-  handleSignOut: () => void;
-}
 
-function NavBar({ handleSignOut }: NavBarProps) {
+
+function NavBar() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -28,6 +28,18 @@ function NavBar({ handleSignOut }: NavBarProps) {
 
     return () => unsubscribe();
   }, []);
+
+  const handleSignOutFirebase = () => {
+    const authInstance = getAuth();
+    signOut(authInstance)
+      .then(() => {
+        console.log("Sign out successful");
+        navigate('/signin');
+      })
+      .catch((error) => {
+        console.error("Sign out error:", error);
+      });
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -61,7 +73,7 @@ function NavBar({ handleSignOut }: NavBarProps) {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <button className="nav-link" onClick={handleSignOut}>
+                  <button className="nav-link" onClick={handleSignOutFirebase}>
                     Sign Out
                   </button>
                 </li>
