@@ -1,10 +1,15 @@
 import { onAuthStateChanged } from "firebase/auth"
 import { useState} from 'react'
 
-export default function profile() {
+
+
+
+export default function Profile() {
+
+
   return (
     <div>
-      <h3> {User.email}'s Watch List</h3>
+      <h3> Current Watch List</h3>
       <>Object from saved watchlist will go here</>
     </div>
   )

@@ -6,7 +6,7 @@ import Login from './Views/Login/login';
 import Home from './Views/Home/home';
 import SearchBar from './Components/SearchBar/searchbar';
 import Results from './Views/Results/results';
-import Profile from './Components/Profile/profile';
+import Profile from ".//Views/Profile/profile";
 import { Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import 'bootstrap/dist/css/bootstrap.css';
