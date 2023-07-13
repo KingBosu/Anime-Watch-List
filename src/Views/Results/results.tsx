@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { auth,} from '../../firebase';
+import { auth } from '../../firebase';
 import { doc, setDoc, getFirestore } from 'firebase/firestore';
 
 interface Anime {
   _id: string;
   title: string;
+  image: string
   ranking: number;
   status: string;
   type: string;
@@ -21,6 +22,7 @@ function Results() {
   const location = useLocation();
   const { searchTitle } = location.state as ResultsProps;
   const [animeList, setAnimeList] = useState<Anime[]>([]);
+  const [selectedAnime, setSelectedAnime] = useState<Anime | null>(null);
 
   const addToWatchList = async (anime: Anime) => {
     const user = auth.currentUser;
@@ -35,6 +37,10 @@ function Results() {
     } else {
       console.log('User not logged in');
     }
+  };
+
+  const handleShowSummary = (anime: Anime) => {
+    setSelectedAnime(anime);
   };
 
   useEffect(() => {
@@ -79,7 +85,7 @@ function Results() {
       <div className="row">
         {animeList.length > 0 ? (
           animeList.map((anime) => (
-            <div key={anime._id} className="col-md-4 mb-4">
+            <div key={anime._id} className="col-md-3 mb-3">
               <div className="card">
                 <img className="card-img-top" src={anime.image} alt={anime.title} />
                 <div className="card-body">
@@ -88,7 +94,18 @@ function Results() {
                   <p className="card-text">Status: {anime.status}</p>
                   <p className="card-text">{anime.type}</p>
                   <p className="card-text">Episodes: {anime.episodes}</p>
-                  <p className="card-text">Summary: {anime.synopsis}</p>
+                  {selectedAnime === anime ? (
+                    <>
+                      <p className="card-text">Summary: {selectedAnime.synopsis}</p>
+                      <button className="btn btn-primary" onClick={() => setSelectedAnime(null)}>
+                        Hide Summary
+                      </button>
+                    </>
+                  ) : (
+                    <button className="btn btn-primary" onClick={() => handleShowSummary(anime)}>
+                      Show Summary
+                    </button>
+                  )}
                   <button className="btn btn-primary" onClick={() => addToWatchList(anime)}>
                     Add to List
                   </button>

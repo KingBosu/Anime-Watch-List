@@ -1,17 +1,19 @@
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { auth } from "../../firebase";
 import { getAuth, signOut } from "firebase/auth";
+import SearchBar from "../SearchBar/searchbar";
+import { Button, Collapse } from "react-bootstrap";
 
 interface User {
   email: string | null;
   id: string | null;
 }
 
-
-
 function NavBar() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,7 +36,7 @@ function NavBar() {
     signOut(authInstance)
       .then(() => {
         console.log("Sign out successful");
-        navigate('/signin');
+        navigate("/signin");
       })
       .catch((error) => {
         console.error("Sign out error:", error);
@@ -42,60 +44,67 @@ function NavBar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
-        <Link className="navbar-brand" to="/">
-          Logo
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                Home
-              </Link>
-            </li>
-            {currentUser ? (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/profile">
-                    Profile
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <button className="nav-link" onClick={handleSignOutFirebase}>
-                    Sign Out
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/signin">
-                    Sign In
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/signup">
-                    Sign Up
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
+    <div className="navstyle">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container">
+          <Link className="navbar-brand" to="/">
+            Logo
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={() => setIsNavOpen(!isNavOpen)}
+            aria-controls="navbarNav"
+            aria-expanded={isNavOpen}
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <Collapse in={isNavOpen} className="navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/">
+                  Home
+                </Link>
+              </li>
+              {currentUser ? (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/profile">
+                      Profile
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link"
+                      onClick={handleSignOutFirebase}
+                    >
+                      Sign Out
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/signin">
+                      Sign In
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/signup">
+                      Sign Up
+                    </Link>
+                  </li>
+                </>
+              )}
+              <li className="nav-item">
+                <SearchBar />
+              </li>
+            </ul>
+          </Collapse>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
 

@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { auth } from "../../firebase";
+import { Carousel } from "react-bootstrap";
+import { toast } from "react-toastify";
+
+interface Anime {
+  _id: string;
+  title: string;
+  image: string;
+}
 
 export default function Home() {
-  const [animeList, setAnimeList] = useState([]);
+  const [animeList, setAnimeList] = useState<Anime[]>([]);
 
   async function fetchAnimeData() {
     const url =
@@ -23,6 +33,27 @@ export default function Home() {
     }
   }
 
+  const addToWatchList = async (anime: Anime) => {
+    const user = auth.currentUser;
+    if (user) {
+      const db = getFirestore();
+      try {
+        await setDoc(
+          doc(db, "users", user.uid, "watchlist", anime._id),
+          anime
+        );
+        console.log("Anime added to watchlist:", anime.title);
+        toast.success("Added anime to watchlist")
+      } catch (error) {
+        console.error("Error adding anime to watchlist:", error);
+        toast.error("Error adding anime to watchlist:");
+      }
+    } else {
+      console.log("User not logged in");
+      toast.error("You need to log in to add to your watchlist")
+    }
+  };
+
   useEffect(() => {
     fetchAnimeData();
   }, []);
@@ -32,56 +63,45 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const interval = setInterval(showNextAnime, 3000); // Auto move carousel every 3 seconds
+    const interval = setInterval(showNextAnime, 25000);
     return () => clearInterval(interval);
   }, [animeList]);
 
   return (
-    <div>
-      <h1>Anime Watch List</h1>
-      <div
-        id="carouselExampleControls"
-        className="carousel slide"
-        data-bs-ride="carousel"
-      >
-        <div className="carousel-inner">
+    <div className="d-flex justify-content-center">
+      <div className="text-center">
+        <h1>Anime Watch List</h1>
+        <h4>Sign up or Sign in and keep track of all the anime you are currently watching!</h4>
+
+        <h5>Popular Anime</h5>
+        <h6>By Ranking</h6>
+        <br />
+        <br />
+        <Carousel interval={5000} pause="hover">
           {animeList.slice(0, 5).map((anime, index) => (
-            <div
-              className={`carousel-item ${index === 0 ? "active" : ""}`}
-              key={anime._id}
-            >
-              <a href="#">
+            <Carousel.Item key={anime._id}>
+              <div className="d-flex flex-column align-items-center">
                 <img
+                  className="mb-3"
                   src={anime.image}
-                  className="d-block w-100"
                   alt={anime.title}
+                  style={{ maxHeight: "500px" }}
                 />
-              </a>
-              <div className="carousel-caption d-none d-md-block">
                 <h5>{anime.title}</h5>
-                <button className="btn btn-primary">Add to List</button>
+                <br></br>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => addToWatchList(anime)}
+                  style={{ zIndex: 2 }}
+                >
+                  Add to List
+                </button>
+                <br></br>
+                <br></br>
               </div>
-            </div>
+            </Carousel.Item>
           ))}
-        </div>
-        <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#carouselExampleControls"
-          data-bs-slide="prev"
-        >
-          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#carouselExampleControls"
-          data-bs-slide="next"
-        >
-          <span className="carousel-control-next-icon" aria-hidden="true"></span>
-          <span className="visually-hidden">Next</span>
-        </button>
+        </Carousel>
       </div>
     </div>
   );

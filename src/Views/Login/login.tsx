@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const defaultTheme = createTheme();
 
@@ -20,6 +21,21 @@ export default function Login({ setIsUserSignedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  const handleSignInWithGoogle = () => {
+    const authInstance = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    signInWithPopup(authInstance, provider)
+      .then((result) => {
+        const user = result.user;
+        setIsUserSignedIn(true);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Sign in with Google error:", error);
+      });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,8 +46,7 @@ export default function Login({ setIsUserSignedIn }) {
         navigate("/");
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        console.error("Sign in error:", error);
       });
   };
 
@@ -110,6 +125,14 @@ export default function Login({ setIsUserSignedIn }) {
                 sx={{ mt: 3, mb: 2 }}
               >
                 Sign In
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ mt: 1, mb: 2 }}
+                onClick={handleSignInWithGoogle}
+              >
+                Sign In with Google
               </Button>
               <Grid container>
                 <Grid item xs>

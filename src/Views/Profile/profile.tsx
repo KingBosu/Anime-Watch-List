@@ -52,9 +52,9 @@ function Profile() {
   };
 
   return (
-    <div>
+    <div className="d-flex align-items-center justify-content-center flex-column">
     
-      <h3>Current WatchList</h3>
+      <h3>CurrentWatchList</h3>
       <div className="row">
         {watchlist.length > 0 ? (
           watchlist.map((anime) => (
